@@ -1,0 +1,90 @@
+<?php
+require_once 'functions.php';
+require_once 'layout.php';
+
+$erros   = [];
+$sucesso = '';
+$dados   = ['enunciado' => '', 'alternativas' => ['','','','',''], 'correta' => 0];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $enunciado     = trim($_POST['enunciado'] ?? '');
+    $alternativas  = $_POST['alternativas'] ?? [];
+    $correta       = (int)($_POST['correta'] ?? -1);
+
+    // Validações
+    if (empty($enunciado)) {
+        $erros[] = 'O enunciado é obrigatório.';
+    }
+    $alts_preenchidas = array_filter($alternativas, fn($a) => trim($a) !== '');
+    if (count($alts_preenchidas) < 2) {
+        $erros[] = 'Informe pelo menos 2 alternativas.';
+    }
+    if ($correta < 0 || !isset($alternativas[$correta]) || trim($alternativas[$correta]) === '') {
+        $erros[] = 'Selecione a alternativa correta.';
+    }
+
+    if (empty($erros)) {
+        // Limpa alternativas vazias e reindexação
+        $alts_limpas = [];
+        $novo_correta = 0;
+        $idx_real = 0;
+        foreach ($alternativas as $i => $alt) {
+            if (trim($alt) !== '') {
+                $alts_limpas[] = trim($alt);
+                if ($i == $correta) $novo_correta = $idx_real;
+                $idx_real++;
+            }
+        }
+        criar_multipla($enunciado, $alts_limpas, $novo_correta);
+        $sucesso = 'Pergunta de múltipla escolha criada com sucesso!';
+        $dados   = ['enunciado' => '', 'alternativas' => ['','','','',''], 'correta' => 0];
+    } else {
+        $dados = ['enunciado' => $enunciado, 'alternativas' => $alternativas, 'correta' => $correta];
+    }
+}
+
+render_header('Nova Pergunta — <span>Múltipla Escolha</span>', 'Crie uma pergunta com alternativas para os desafios corporativos');
+?>
+
+<?php if ($sucesso): ?>
+  <div class="alert alert-success"><?= htmlspecialchars($sucesso) ?> — <a href="listar.php" style="color:inherit;font-weight:600">Ver todas as perguntas</a></div>
+<?php endif; ?>
+<?php foreach ($erros as $e): ?>
+  <div class="alert alert-error"><?= htmlspecialchars($e) ?></div>
+<?php endforeach; ?>
+
+<div class="card">
+  <div class="card-title">Dados da Pergunta</div>
+  <form method="POST" action="">
+
+    <div class="form-group">
+      <label for="enunciado">Enunciado da Pergunta</label>
+      <textarea id="enunciado" name="enunciado" placeholder="Digite a situação ou pergunta para o gestor…" rows="4"><?= htmlspecialchars($dados['enunciado']) ?></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Alternativas <span style="color:var(--muted);text-transform:none;letter-spacing:0;font-size:.78rem">(mín. 2, máx. 5 — marque a correta)</span></label>
+      <?php $letras = ['A','B','C','D','E']; ?>
+      <?php for ($i = 0; $i < 5; $i++): ?>
+      <div class="alt-row">
+        <div class="alt-label"><?= $letras[$i] ?></div>
+        <input type="text" name="alternativas[<?= $i ?>]"
+               placeholder="Alternativa <?= $letras[$i] ?> (deixe vazio para omitir)"
+               value="<?= htmlspecialchars($dados['alternativas'][$i] ?? '') ?>">
+        <label>
+          <input type="radio" name="correta" value="<?= $i ?>"
+                 <?= ($dados['correta'] == $i) ? 'checked' : '' ?>>
+          Correta
+        </label>
+      </div>
+      <?php endfor; ?>
+    </div>
+
+    <div class="action-row">
+      <button type="submit" class="btn btn-primary">Salvar Pergunta</button>
+      <a href="index.php" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</div>
+
+<?php render_footer(); ?>
