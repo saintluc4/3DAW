@@ -1,0 +1,209 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;700;800&display=swap');
+  .calc-wrap { display:flex; justify-content:center; padding:2rem 0; }
+  .calc {
+    background:#0f0f0f;
+    border-radius:24px;
+    padding:20px;
+    width:320px;
+    border:1px solid #1f1f1f;
+  }
+  .display {
+    background:#161616;
+    border-radius:14px;
+    padding:18px 20px 14px;
+    margin-bottom:16px;
+    min-height:96px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    border:1px solid #222;
+  }
+  .expr {
+    font-family:'DM Mono',monospace;
+    font-size:13px;
+    color:#555;
+    min-height:18px;
+    text-align:right;
+    letter-spacing:0.03em;
+  }
+  .result {
+    font-family:'Syne',sans-serif;
+    font-size:40px;
+    font-weight:700;
+    color:#f0f0f0;
+    text-align:right;
+    letter-spacing:-0.02em;
+    line-height:1;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .btns {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+  }
+  .btn {
+    border:none;
+    border-radius:12px;
+    height:64px;
+    font-family:'Syne',sans-serif;
+    font-size:18px;
+    font-weight:700;
+    cursor:pointer;
+    transition:transform 0.08s, filter 0.08s;
+    user-select:none;
+  }
+  .btn:active { transform:scale(0.93); }
+  .btn-num {
+    background:#1c1c1c;
+    color:#e8e8e8;
+    border:1px solid #2a2a2a;
+  }
+  .btn-num:hover { background:#242424; }
+  .btn-op {
+    background:#2a1f00;
+    color:#f5a623;
+    border:1px solid #3d2e00;
+    font-size:22px;
+  }
+  .btn-op:hover { background:#321f00; }
+  .btn-clear {
+    background:#1f1214;
+    color:#e2556a;
+    border:1px solid #2f1820;
+  }
+  .btn-clear:hover { background:#271418; }
+  .btn-equals {
+    background:#f5a623;
+    color:#0f0f0f;
+    border:none;
+    font-size:26px;
+  }
+  .btn-equals:hover { filter:brightness(1.1); }
+  .btn-zero { grid-column:span 2; }
+  .label {
+    font-family:'DM Mono',monospace;
+    font-size:10px;
+    color:#333;
+    text-align:center;
+    margin-bottom:8px;
+    letter-spacing:0.15em;
+    text-transform:uppercase;
+  }
+</style>
+
+<div class="calc-wrap">
+  <div>
+    <p class="label">Calculadora</p>
+    <div class="calc" role="application" aria-label="Calculadora">
+      <div class="display">
+        <div class="expr" id="expr"></div>
+        <div class="result" id="result">0</div>
+      </div>
+      <div class="btns">
+        <button class="btn btn-clear" onclick="limpar()">C</button>
+        <button class="btn btn-clear" onclick="apagar()">⌫</button>
+        <button class="btn btn-op" onclick="op('%')">%</button>
+        <button class="btn btn-op" onclick="op('÷')">÷</button>
+
+        <button class="btn btn-num" onclick="num('7')">7</button>
+        <button class="btn btn-num" onclick="num('8')">8</button>
+        <button class="btn btn-num" onclick="num('9')">9</button>
+        <button class="btn btn-op" onclick="op('×')">×</button>
+
+        <button class="btn btn-num" onclick="num('4')">4</button>
+        <button class="btn btn-num" onclick="num('5')">5</button>
+        <button class="btn btn-num" onclick="num('6')">6</button>
+        <button class="btn btn-op" onclick="op('−')">−</button>
+
+        <button class="btn btn-num" onclick="num('1')">1</button>
+        <button class="btn btn-num" onclick="num('2')">2</button>
+        <button class="btn btn-num" onclick="num('3')">3</button>
+        <button class="btn btn-op" onclick="op('+')">+</button>
+
+        <button class="btn btn-num btn-zero" onclick="num('0')">0</button>
+        <button class="btn btn-num" onclick="virgula()">,</button>
+        <button class="btn btn-equals" onclick="igual()">=</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let estado = { atual: '0', anterior: '', operador: '', novoNum: false };
+
+  function atualizar() {
+    const r = document.getElementById('result');
+    const e = document.getElementById('expr');
+    r.textContent = estado.atual;
+    e.textContent = estado.anterior && estado.operador ? estado.anterior + ' ' + estado.operador : '';
+  }
+
+  function num(v) {
+    if (estado.novoNum) { estado.atual = v; estado.novoNum = false; }
+    else { estado.atual = estado.atual === '0' ? v : estado.atual + v; }
+    atualizar();
+  }
+
+  function virgula() {
+    if (estado.novoNum) { estado.atual = '0,'; estado.novoNum = false; }
+    else if (!estado.atual.includes(',')) { estado.atual += ','; }
+    atualizar();
+  }
+
+  function op(o) {
+    if (estado.operador && !estado.novoNum) calcular(false);
+    estado.anterior = estado.atual;
+    estado.operador = o;
+    estado.novoNum = true;
+    atualizar();
+  }
+
+  function calcular(fechar=true) {
+    if (!estado.operador || estado.novoNum) return;
+    const a = parseFloat(estado.anterior.replace(',','.'));
+    const b = parseFloat(estado.atual.replace(',','.'));
+    let res;
+    if (estado.operador === '+') res = a + b;
+    else if (estado.operador === '−') res = a - b;
+    else if (estado.operador === '×') res = a * b;
+    else if (estado.operador === '÷') res = b !== 0 ? a / b : 'Erro';
+    else if (estado.operador === '%') res = a * (b / 100);
+    if (res !== 'Erro') {
+      const str = res.toString().replace('.',',');
+      estado.atual = str.length > 12 ? parseFloat(res.toPrecision(10)).toString().replace('.',',') : str;
+    } else { estado.atual = 'Erro'; }
+    if (fechar) { estado.anterior = ''; estado.operador = ''; }
+    estado.novoNum = true;
+    atualizar();
+  }
+
+  function igual() { calcular(true); }
+
+  function limpar() {
+    estado = { atual: '0', anterior: '', operador: '', novoNum: false };
+    atualizar();
+  }
+
+  function apagar() {
+    if (estado.novoNum || estado.atual === 'Erro') { estado.atual = '0'; estado.novoNum = false; }
+    else { estado.atual = estado.atual.length > 1 ? estado.atual.slice(0,-1) : '0'; }
+    atualizar();
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key >= '0' && e.key <= '9') num(e.key);
+    else if (e.key === '+') op('+');
+    else if (e.key === '-') op('−');
+    else if (e.key === '*') op('×');
+    else if (e.key === '/') { e.preventDefault(); op('÷'); }
+    else if (e.key === '%') op('%');
+    else if (e.key === 'Enter' || e.key === '=') igual();
+    else if (e.key === 'Backspace') apagar();
+    else if (e.key === 'Escape') limpar();
+    else if (e.key === ',' || e.key === '.') virgula();
+  });
+</script>
