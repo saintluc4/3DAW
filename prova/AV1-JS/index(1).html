@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WaterFalls Corp — Sistema de Treinamento</title>
+
+  <!-- Fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ── Navbar ─────────────────────────────────────────────── -->
+  <nav>
+    <div class="nav-inner">
+      <span class="nav-brand" onclick="navigate('dashboard')">WaterFalls Corp</span>
+      <button class="nav-link" data-page="dashboard"      onclick="navigate('dashboard')">Dashboard</button>
+      <button class="nav-link" data-page="listar"         onclick="navigate('listar')">Perguntas</button>
+      <button class="nav-link" data-page="criar_multipla" onclick="navigate('criar_multipla')">+ Múltipla</button>
+      <button class="nav-link" data-page="criar_texto"    onclick="navigate('criar_texto')">+ Texto</button>
+      <div class="nav-sep"></div>
+      <button class="nav-link" data-page="usuarios"       onclick="navigate('usuarios')">Usuários</button>
+    </div>
+  </nav>
+
+  <!-- ── Cabeçalho dinâmico de página ───────────────────────── -->
+  <div class="page-header">
+    <h1 id="ph-title"></h1>
+    <p  id="ph-sub"></p>
+  </div>
+
+  <!-- ── Conteúdo principal (injetado pelo router) ──────────── -->
+  <main id="app"></main>
+
+  <!-- ── Container do modal de confirmação ──────────────────── -->
+  <div id="modal-container"></div>
+
+  <!-- ── Footer ─────────────────────────────────────────────── -->
+  <footer>
+    WaterFalls Corp &copy; <span id="year"></span>
+    — Sistema de Treinamento Corporativo &nbsp;|&nbsp; FAETERJ-Rio &nbsp;|&nbsp; 3DAW
+  </footer>
+
+  <!-- ── Scripts (ordem de dependência) ────────────────────── -->
+  <script src="js/db.js"></script>       <!-- 1. dados -->
+  <script src="js/utils.js"></script>    <!-- 2. helpers -->
+  <script src="js/layout.js"></script>   <!-- 3. header/footer -->
+  <script src="js/modal.js"></script>    <!-- 4. modal (usa Utils e DB) -->
+  <script src="js/views.js"></script>    <!-- 5. views (usa Utils, DB, Layout, LETRAS) -->
+  <script src="js/events.js"></script>   <!-- 6. eventos (usa DB, Router, Views, Utils, LETRAS) -->
+  <script src="js/router.js"></script>   <!-- 7. router (usa Views, Events, Layout) -->
+
+  <!-- ── Bootstrap da aplicação ─────────────────────────────── -->
+  <script>
+    Layout.initFooter();    // preenche o ano no footer
+    Router.go('dashboard'); // renderiza a página inicial
+  </script>
+
+</body>
+</html>
