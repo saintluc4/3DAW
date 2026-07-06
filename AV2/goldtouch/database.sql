@@ -102,6 +102,6 @@ INSERT INTO planos (nome, descricao, preco, servicos_inclusos) VALUES
 
 -- Dados iniciais - Cupons
 INSERT INTO cupons (codigo, desconto_percent, pontos_necessarios, validade) VALUES
-('TARDE20', 20, 0, DATE_ADD(NOW(), INTERVAL 30 DAY)),
-('PRIMEIRAVISITA', 15, 0, DATE_ADD(NOW(), INTERVAL 60 DAY)),
-('VIP50', 50, 500, DATE_ADD(NOW(), INTERVAL 90 DAY));
+('TARDE20',        20, 0,   '2026-12-31'),
+('PRIMEIRAVISITA', 15, 0,   '2026-12-31'),
+('VIP50',          50, 500, '2026-12-31');

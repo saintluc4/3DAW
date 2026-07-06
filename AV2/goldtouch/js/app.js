@@ -87,6 +87,18 @@ function toast(msg, tipo = 'info') {
   setTimeout(() => el.remove(), 4000);
 }
 
+
+function mostrarBannerDemo(ligado) {
+  const id = 'bannerDemo';
+  if (!ligado) { document.getElementById(id)?.remove(); return; }
+  if (document.getElementById(id)) return;
+  const b = document.createElement('div');
+  b.id = id;
+  b.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#1A1A2E;color:#E8D08A;text-align:center;padding:.55rem 1rem;font-size:.82rem;font-weight:600;z-index:998;letter-spacing:.04em;border-top:2px solid #C9A84C;';
+  b.innerHTML = '⚡ Modo Demo — banco de dados não conectado. Configure <code style="background:rgba(255,255,255,.1);padding:.1rem .3rem;border-radius:3px">includes/config.php</code> com suas credenciais MySQL para ativar todos os recursos.';
+  document.body.appendChild(b);
+}
+
 function setLoading(btn, loading) {
   if (!btn) return;
   if (loading) {
@@ -146,6 +158,7 @@ async function verificarSessao() {
   if (data.logado) {
     State.cliente = data.cliente;
     renderUILogado();
+    if (data.demo) mostrarBannerDemo(true);
   } else {
     renderUIDeslogado();
   }
@@ -195,6 +208,7 @@ async function submitLogin(e) {
   if (ok) {
     State.cliente = data.cliente;
     renderUILogado();
+    if (data.demo) mostrarBannerDemo(true);
     fecharModal('modalLogin');
     toast(`Bem-vinda, ${data.cliente.nome.split(' ')[0]}! ✨`, 'success');
   } else {
@@ -222,6 +236,7 @@ async function submitRegistro(e) {
   if (ok) {
     State.cliente = data.cliente;
     renderUILogado();
+    if (data.demo) mostrarBannerDemo(true);
     fecharModal('modalRegistro');
     toast(`Conta criada com sucesso! Bem-vinda, ${nome.split(' ')[0]}! 🌟`, 'success');
   } else {
@@ -253,6 +268,7 @@ async function carregarServicos(categoria = '') {
 
   todosServicos = data.servicos;
   renderServicos(data.servicos);
+  if (data.demo) mostrarBannerDemo(true);
 }
 
 function renderServicos(lista) {
