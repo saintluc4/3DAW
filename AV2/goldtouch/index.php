@@ -404,7 +404,7 @@
 
     <!-- Step 2: Pagamento + Cupom -->
     <div class="step-panel">
-      <p style="font-size:.82rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-soft);margin-bottom:1rem">Forma de pagamento</p>
+      <p class="step-label">Forma de pagamento</p>
 
       <div class="pagamento-options">
         <label class="pagamento-opt" onclick="selecionarPagamento('credito', this)">
@@ -421,18 +421,141 @@
         </label>
       </div>
 
-      <div style="margin-top:1.2rem">
-        <label class="form-label">Cupom de desconto</label>
-        <div class="cupom-inline">
-          <input type="text" id="inputCupom" class="form-input" placeholder="Ex: TARDE20" style="text-transform:uppercase"/>
-          <button type="button" id="btnValidarCupom" class="btn btn-outline" onclick="validarCupom()">Aplicar</button>
+      <!-- Campos: Cartão de Crédito -->
+      <div id="campos-credito" class="campos-pagamento">
+        <p class="campos-pagamento-titulo">Dados do cartão de crédito</p>
+        <div class="form-group">
+          <label class="form-label">Nome no cartão</label>
+          <input type="text" id="cc-nome" class="form-input" placeholder="NOME SOBRENOME" maxlength="40"/>
         </div>
-        <div id="cupomInfo" style="margin-top:.4rem"></div>
+        <div class="form-group">
+          <label class="form-label">Número do cartão</label>
+          <input type="text" id="cc-numero" class="form-input" placeholder="0000 0000 0000 0000" maxlength="19" oninput="mascaraCartao(this)"/>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Validade</label>
+            <input type="text" id="cc-validade" class="form-input" placeholder="MM/AA" maxlength="5" oninput="mascaraValidade(this)"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">CVV</label>
+            <input type="text" id="cc-cvv" class="form-input" placeholder="123" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'')"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Parcelas</label>
+          <select id="cc-parcelas" class="form-input">
+            <option value="1">1x sem juros</option>
+            <option value="2">2x sem juros</option>
+            <option value="3">3x sem juros</option>
+            <option value="6">6x com juros (1,99%)</option>
+            <option value="12">12x com juros (1,99%)</option>
+          </select>
+        </div>
       </div>
 
-      <div style="display:flex;justify-content:space-between;margin-top:1.5rem">
+      <!-- Campos: Cartão de Débito -->
+      <div id="campos-debito" class="campos-pagamento">
+        <p class="campos-pagamento-titulo">Dados do cartão de débito</p>
+        <div class="form-group">
+          <label class="form-label">Nome no cartão</label>
+          <input type="text" id="db-nome" class="form-input" placeholder="NOME SOBRENOME" maxlength="40"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Número do cartão</label>
+          <input type="text" id="db-numero" class="form-input" placeholder="0000 0000 0000 0000" maxlength="19" oninput="mascaraCartao(this)"/>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Validade</label>
+            <input type="text" id="db-validade" class="form-input" placeholder="MM/AA" maxlength="5" oninput="mascaraValidade(this)"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">CVV</label>
+            <input type="text" id="db-cvv" class="form-input" placeholder="123" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'')"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campos: Pix -->
+      <div id="campos-pix" class="campos-pagamento">
+        <div class="pix-box">
+          <div class="pix-qr">
+            <div class="pix-qr-inner">
+              <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                <rect width="80" height="80" fill="#F5F0E8"/>
+                <!-- QR simulado -->
+                <rect x="8"  y="8"  width="24" height="24" rx="2" fill="#1A1A2E"/>
+                <rect x="11" y="11" width="18" height="18" rx="1" fill="#F5F0E8"/>
+                <rect x="14" y="14" width="12" height="12" rx="1" fill="#1A1A2E"/>
+                <rect x="48" y="8"  width="24" height="24" rx="2" fill="#1A1A2E"/>
+                <rect x="51" y="11" width="18" height="18" rx="1" fill="#F5F0E8"/>
+                <rect x="54" y="14" width="12" height="12" rx="1" fill="#1A1A2E"/>
+                <rect x="8"  y="48" width="24" height="24" rx="2" fill="#1A1A2E"/>
+                <rect x="11" y="51" width="18" height="18" rx="1" fill="#F5F0E8"/>
+                <rect x="14" y="54" width="12" height="12" rx="1" fill="#1A1A2E"/>
+                <rect x="36" y="8"  width="6"  height="6"  fill="#C9A84C"/>
+                <rect x="36" y="18" width="6"  height="6"  fill="#C9A84C"/>
+                <rect x="36" y="28" width="6"  height="6"  fill="#1A1A2E"/>
+                <rect x="8"  y="36" width="6"  height="6"  fill="#1A1A2E"/>
+                <rect x="18" y="36" width="6"  height="6"  fill="#C9A84C"/>
+                <rect x="28" y="36" width="6"  height="6"  fill="#1A1A2E"/>
+                <rect x="48" y="36" width="6"  height="6"  fill="#C9A84C"/>
+                <rect x="58" y="36" width="6"  height="6"  fill="#1A1A2E"/>
+                <rect x="68" y="36" width="6"  height="6"  fill="#C9A84C"/>
+                <rect x="36" y="48" width="6"  height="6"  fill="#1A1A2E"/>
+                <rect x="48" y="48" width="6"  height="6"  fill="#C9A84C"/>
+                <rect x="58" y="58" width="6"  height="6"  fill="#1A1A2E"/>
+                <rect x="68" y="48" width="6"  height="6"  fill="#C9A84C"/>
+                <rect x="36" y="68" width="6"  height="6"  fill="#C9A84C"/>
+                <rect x="48" y="68" width="6"  height="6"  fill="#1A1A2E"/>
+                <rect x="68" y="68" width="6"  height="6"  fill="#1A1A2E"/>
+              </svg>
+            </div>
+            <p class="pix-qr-label">QR Code simulado</p>
+          </div>
+          <div class="pix-info">
+            <p class="pix-titulo">Pague via Pix</p>
+            <p class="pix-desc">Escaneie o QR Code ao lado ou copie a chave abaixo. O pagamento é confirmado na hora.</p>
+            <div class="pix-chave-box">
+              <span class="pix-chave-label">Chave Pix:</span>
+              <span class="pix-chave-valor">contato@goldtouch.com.br</span>
+              <button class="btn btn-ghost btn-sm" onclick="copiarChavePix()">Copiar</button>
+            </div>
+            <label class="pix-confirmar-label">
+              <input type="checkbox" id="pix-confirmado"/>
+              Já realizei o pagamento via Pix
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campos: Dinheiro -->
+      <div id="campos-dinheiro" class="campos-pagamento">
+        <div class="dinheiro-box">
+          <div class="dinheiro-icon">💵</div>
+          <p class="dinheiro-titulo">Pagamento em dinheiro</p>
+          <p class="dinheiro-desc">O pagamento será realizado presencialmente no salão, no dia do atendimento. Traga o valor exato se possível.</p>
+          <label class="pix-confirmar-label">
+            <input type="checkbox" id="dinheiro-confirmado"/>
+            Estou ciente que pagarei no local
+          </label>
+        </div>
+      </div>
+
+      <!-- Cupom -->
+      <div class="cupom-section">
+        <label class="form-label">Cupom de desconto</label>
+        <div class="cupom-inline">
+          <input type="text" id="inputCupom" class="form-input form-input--upper" placeholder="Ex: TARDE20"/>
+          <button type="button" id="btnValidarCupom" class="btn btn-outline" onclick="validarCupom()">Aplicar</button>
+        </div>
+        <div id="cupomInfo"></div>
+      </div>
+
+      <div class="step-actions step-actions--between">
         <button class="btn btn-ghost" onclick="irStep(1)">← Voltar</button>
-        <button class="btn btn-primary" onclick="irStep(3)">Revisar →</button>
+        <button class="btn btn-primary" onclick="avancarStep3()">Revisar →</button>
       </div>
     </div>
 
